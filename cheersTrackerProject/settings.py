@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'user', # 회원가입, 로그인 관련 로직 앱
     'drinkingRecord', # 음주 기록 관련 로직 앱
     'sobrietyRecord', # 금주 기록 관련 로직 앱
+    'community', # 커뮤니티 관련 로직 앱
     'rest_framework',
     'rest_framework.authtoken',
     'knox',
@@ -172,3 +173,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.CustomUser'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
