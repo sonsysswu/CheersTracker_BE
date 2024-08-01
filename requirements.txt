@@ -5,3 +5,5 @@ django-allauth
 dj-rest-auth
 requests
 jwt
+python-dotenv
+mysqlclient
