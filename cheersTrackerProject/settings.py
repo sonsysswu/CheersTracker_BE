@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,12 +124,27 @@ WSGI_APPLICATION = 'cheersTrackerProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}'''
+
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+DB_PASSWORD = os.getenv('CHEERSTRACKERDB_PASSWORD')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'CheersTrackerDB',
+        'USER': 'root',
+        'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',  # 또는 사용 중인 호스트
+        'PORT': '3306',  # 기본 MySQL 포트
+    }
 }
+
 
 
 # Password validation
