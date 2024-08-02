@@ -100,6 +100,21 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'kakao': {
+        # 카카오 추가 설정
+    },
+}
+
 ROOT_URLCONF = 'cheersTrackerProject.urls'
 
 TEMPLATES = [
@@ -192,3 +207,5 @@ AUTH_USER_MODEL = 'user.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+REST_USE_JWT = True  # JWT 사용 시
