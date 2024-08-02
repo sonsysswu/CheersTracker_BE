@@ -7,3 +7,4 @@ requests
 jwt
 python-dotenv
 mysqlclient
+Pillow
