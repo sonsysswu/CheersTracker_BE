@@ -8,3 +8,5 @@ jwt
 python-dotenv
 mysqlclient
 Pillow
+python-social-auth
+social-auth-app-django

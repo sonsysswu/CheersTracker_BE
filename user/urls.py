@@ -1,8 +1,12 @@
 from django.urls import path, include
-from .views import RegisterView
+from rest_framework.authtoken.views import obtain_auth_token
+from .views import JoinView, LoginView
 
 urlpatterns = [
-    path('register/', RegisterView.as_view(), name='register'),
+    path('join/', JoinView.as_view(), name='join'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('google/', include('allauth.socialaccount.providers.google.urls')),
+    path('kakao/', include('allauth.socialaccount.providers.kakao.urls')),
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/registration/', include('dj_rest_auth.registration.urls')),
 ]
