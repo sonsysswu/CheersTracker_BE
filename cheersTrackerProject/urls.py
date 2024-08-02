@@ -25,7 +25,7 @@ urlpatterns = [
     path('drinking/',include('drinkingRecord.urls')),
     path('sobriety/',include('sobrietyRecord.urls')),
     path('accounts/',include('allauth.urls')),
-    path('community/', include('sobrietytracker.urls')),
+    path('community/', include('community.urls')),
 ]
 
 if settings.DEBUG:
