@@ -2,3 +2,13 @@ secrets.json
 venv
 db.sqlite3
 .env
+
+community/migrations
+drinkingRecord/migrations
+sobrietyRecord/migrations
+user/migrations
+
+community/__pycache__
+drinkingRecord/__pycache__
+sobrietyRecord/__pycache__
+user/__pycache__
