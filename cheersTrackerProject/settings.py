@@ -137,7 +137,7 @@ DB_PASSWORD = os.getenv('CHEERSTRACKERDB_PASSWORD')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'CheersTrackerDB',
+        'NAME': 'cheerstracker',
         'USER': 'root',
         'PASSWORD': DB_PASSWORD,
         'HOST': 'localhost',  # 또는 사용 중인 호스트

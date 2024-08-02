@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from .models import SobrietyRecord
 from .serializers import SobrietyRecordSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
+
 
 @api_view(['POST'])
 def set_average_consumption(request):
@@ -23,3 +25,7 @@ def set_average_consumption(request):
         )
         serializer = SobrietyRecordSerializer(record)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class SobrietyRecordListCreateView(generics.ListCreateAPIView):
+    queryset = SobrietyRecord.objects.all()
+    serializer_class = SobrietyRecordSerializer
