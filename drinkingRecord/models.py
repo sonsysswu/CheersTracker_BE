@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class AlcoholRecord(models.Model):
     WEATHER_CHOICES = [
@@ -23,7 +23,7 @@ class AlcoholRecord(models.Model):
         ('발효주', '발효주'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date = models.DateField()
     drink_type = models.CharField(max_length=10, choices=DRINK_CHOICES)
     quantity = models.PositiveIntegerField()
