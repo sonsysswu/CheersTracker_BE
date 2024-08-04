@@ -10,3 +10,4 @@ mysqlclient
 Pillow
 python-social-auth
 social-auth-app-django
+django-filter
