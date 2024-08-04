@@ -2,14 +2,14 @@ from rest_framework import generics
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .serializers import ChangePasswordSerializer
+from .models import CustomUser
+from .serializers import EncryptedUserSerializer
 
 User = get_user_model()
 
@@ -59,3 +59,13 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response({"status": "password set"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# 사용자 정보
+class EncryptedUserView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = EncryptedUserSerializer
+    permission_classes = [permissions.IsAuthenticated]  # 인증된 사용자만 접근 허용
+
+    def get_queryset(self):
+        # 선택적으로 특정 사용자의 정보만 제공할 수 있음
+        return self.queryset.filter(username=self.request.user.username)
