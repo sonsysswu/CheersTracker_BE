@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from .serializers import ChangePasswordSerializer
 from .models import CustomUser
 from .serializers import EncryptedUserSerializer
+from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -69,3 +71,15 @@ class EncryptedUserView(generics.ListAPIView):
     def get_queryset(self):
         # 선택적으로 특정 사용자의 정보만 제공할 수 있음
         return self.queryset.filter(username=self.request.user.username)
+    
+class UserListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]  # 관리자 권한이 있는 사용자만 접근 가능
+
+class UserDetailView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user  # 현재 인증된 사용자 정보 반환
