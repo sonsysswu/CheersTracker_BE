@@ -16,6 +16,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     url = models.URLField(max_length=200, null=True, blank=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)  # 좋아요 필드 추가
 
     def __str__(self):
         return self.title
