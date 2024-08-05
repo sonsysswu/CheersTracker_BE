@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,6 +22,16 @@ class AlcoholRecordListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # 새로운 음주 기록 생성 시 사용자 정보를 포함하여 저장
         serializer.save(user=self.request.user)
+
+# 특정 음주 기록을 조회, 업데이트, 삭제하는 API
+class AlcoholRecordDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AlcoholRecord.objects.all()
+    serializer_class = AlcoholRecordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # 현재 사용자에 대한 음주 기록만 조회 가능
+        return self.queryset.filter(user=self.request.user)
 
 # 날짜별로 음주 측정량을 계산해주는 API
 class MonthlyAlcoholConsumption(APIView):
