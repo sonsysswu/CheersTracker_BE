@@ -1,24 +1,39 @@
 from rest_framework import serializers
 from .models import Post, Comment
-from user.serializers import UserSerializer  # 사용자 정보를 직렬화하기 위한 serializer
+from user.serializers import UserSerializer
 
 class PostSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)  # 글 작성자 정보 포함
+    author = UserSerializer(read_only=True)
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = '__all__'
 
+    def get_is_liked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return request.user in obj.likes.all()
+        return False
+
     def create(self, validated_data):
-        # 요청 정보를 통해 현재 사용자 정보를 가져와서 author 필드에 추가
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             validated_data['author'] = request.user
         return super().create(validated_data)
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)  # 댓글 작성자 정보 포함
+    author = UserSerializer(read_only=True)
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = '__all__'
+
+    def get_is_liked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return request.user in obj.likes.all()
+        return False
