@@ -29,6 +29,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments', blank=True)  # 좋아요 필드 추가
 
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title} at {self.created_at}'
