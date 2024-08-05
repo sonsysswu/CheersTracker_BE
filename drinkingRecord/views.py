@@ -23,15 +23,57 @@ class AlcoholRecordListCreateView(generics.ListCreateAPIView):
         # 새로운 음주 기록 생성 시 사용자 정보를 포함하여 저장
         serializer.save(user=self.request.user)
 
-# 특정 음주 기록을 조회, 업데이트, 삭제하는 API
-class AlcoholRecordDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = AlcoholRecord.objects.all()
-    serializer_class = AlcoholRecordSerializer
+# 특정 날짜의 음주 기록을 조회, 업데이트, 삭제하는 API
+class AlcoholRecordDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        # 현재 사용자에 대한 음주 기록만 조회 가능
-        return self.queryset.filter(user=self.request.user)
+    def get(self, request, date_str):
+        # date_str을 사용하여 특정 날짜의 음주 기록을 조회
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        record = AlcoholRecord.objects.filter(user=request.user, date=date).first()
+        
+        if not record:
+            return Response({'error': 'Record not found for the given date.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AlcoholRecordSerializer(record)
+        return Response(serializer.data)
+
+    def put(self, request, date_str):
+        # date_str을 사용하여 특정 날짜의 음주 기록을 업데이트
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        record = AlcoholRecord.objects.filter(user=request.user, date=date).first()
+        
+        if not record:
+            return Response({'error': 'Record not found for the given date.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AlcoholRecordSerializer(record, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, date_str):
+        # date_str을 사용하여 특정 날짜의 음주 기록을 삭제
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        record = AlcoholRecord.objects.filter(user=request.user, date=date).first()
+        
+        if not record:
+            return Response({'error': 'Record not found for the given date.'}, status=status.HTTP_404_NOT_FOUND)
+
+        record.delete()
+        return Response({'message': 'Record deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 # 날짜별로 음주 측정량을 계산해주는 API
 class MonthlyAlcoholConsumption(APIView):
