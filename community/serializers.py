@@ -15,6 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
     class Meta:
         model = Comment
         fields = '__all__'
