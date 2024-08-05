@@ -14,9 +14,12 @@ from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -87,6 +90,7 @@ AUTHENTICATION_BACKENDS = [
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_UNIQUE_EMAIL=True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -103,18 +107,40 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+env = environ.Env()
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
+
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
+GOOGLE_SECRET = env('GOOGLE_SECRET')
+
+KAKAO_CLIENT_ID = env('KAKAO_CLIENT_ID')
+KAKAO_SECRET = env('KAKAO_SECRET')
+KAKAO_KEY = env('KAKAO_KEY')
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = '/drinking/calendar'
+LOGOUT_REDIRECT_URL = '/user/login'
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_SECRET,
+            'key': ''
+        },
         'AUTH_PARAMS': {
             'access_type': 'online',
         }
     },
     'kakao': {
-        # 카카오 추가 설정
+        'APP': {
+            'client_id': KAKAO_CLIENT_ID,
+            'secret': KAKAO_SECRET,
+            'key': KAKAO_KEY
+        },
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
     },
 }
 
