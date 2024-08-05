@@ -99,6 +99,42 @@ class CommentLikeToggleView(APIView):
 
         return Response({'message': message, 'likes_count': comment.likes.count()}, status=status.HTTP_200_OK)
 
+# 게시글 좋아요 삭제 기능
+class PostUnlikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, post_id, *args, **kwargs):
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({'message': 'Like removed', 'likes_count': post.likes.count()}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
+
+# 댓글 좋아요 삭제 기능
+class CommentUnlikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, comment_id, *args, **kwargs):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            return Response({'message': 'Like removed', 'likes_count': comment.likes.count()}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'You have not liked this comment yet.'}, status=status.HTTP_400_BAD_REQUEST)
+
 # 사용자가 작성한 커뮤니티 글 조회
 class UserPostsView(generics.ListAPIView):
     serializer_class = PostSerializer
