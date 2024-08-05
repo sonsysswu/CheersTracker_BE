@@ -3,9 +3,12 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, status
 from .permissions import IsAuthorOrReadOnly
 from rest_framework import generics, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
@@ -34,6 +37,36 @@ class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthorOrReadOnly]
+
+# 게시글 좋아요 기능
+class PostLikeToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id, *args, **kwargs):
+        post = Post.objects.get(id=post_id)
+        user = request.user
+
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({'message': 'Like removed'}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(user)
+            return Response({'message': 'Like added'}, status=status.HTTP_200_OK)
+        
+# 댓글 좋아요 기능
+class CommentLikeToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, comment_id, *args, **kwargs):
+        comment = Comment.objects.get(id=comment_id)
+        user = request.user
+
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            return Response({'message': 'Like removed'}, status=status.HTTP_200_OK)
+        else:
+            comment.likes.add(user)
+            return Response({'message': 'Like added'}, status=status.HTTP_200_OK)
 
 # 사용자가 작성한 커뮤니티 글 조회
 class UserPostsView(generics.ListAPIView):
