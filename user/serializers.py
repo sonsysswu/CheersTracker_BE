@@ -34,7 +34,7 @@ class EncryptedUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['encrypted_username']
+        fields = ['encrypted_username','username']
 
     def get_encrypted_username(self, obj):
         return encrypt_message(obj.username)
