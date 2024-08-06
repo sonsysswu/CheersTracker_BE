@@ -16,11 +16,21 @@ class AlcoholRecordListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # 현재 사용자에 대한 음주 기록 필터링
         return self.queryset.filter(user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        if isinstance(data, list):  
+            serializer = self.get_serializer(data=data, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
-        # 새로운 음주 기록 생성 시 사용자 정보를 포함하여 저장
+        # Save all instances provided in the request
         serializer.save(user=self.request.user)
 
 # 특정 날짜의 음주 기록을 조회, 업데이트, 삭제하는 API
